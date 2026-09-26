@@ -8,6 +8,7 @@ from typing import Any
 import argparse
 
 from mcp.server.mcpserver import MCPServer
+from mcp.server.transport_security import TransportSecuritySettings
 
 from .client import HomeAssistantClient
 from .config import load_config
@@ -235,7 +236,9 @@ def main():
 
     if args.http:
         import uvicorn
-        app = mcp.streamable_http_app()
+        app = mcp.streamable_http_app(
+            transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False)
+        )
         uvicorn.run(app, host=args.host, port=args.port)
     else:
         mcp.run()
