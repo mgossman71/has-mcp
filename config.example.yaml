@@ -1,0 +1,15 @@
+# Home Assistant MCP Server Configuration
+# Copy this to config.yaml and fill in your values.
+# Token: either set HA_TOKEN env var, or uncomment and paste directly:
+# token: "your-token-here"
+
+base_url: http://YOUR_HA_HOST:8123
+
+# Whitelist of allowed entities.
+# Only these can be listed, read, or controlled.
+allowed_entities:
+  # Lights
+  - light.living_room
+  - light.kitchen
+  # Switches
+  - switch.my_device

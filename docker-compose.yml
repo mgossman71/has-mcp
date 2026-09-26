@@ -1,0 +1,11 @@
+services:
+  homeassistant-mcp:
+    build: .
+    container_name: homeassistant-mcp
+    ports:
+      - "8765:8765"
+    environment:
+      - HA_TOKEN=${HA_TOKEN}
+      # Override with: export HA_BASE_URL=http://your-ha-host:8123
+      - HA_BASE_URL=http://YOUR_HA_HOST:8123
+    restart: unless-stopped
