@@ -1,6 +1,6 @@
 # Home Assistant MCP
 
-A [Model Context Protocol](https://modelcontextprotocol.io/) server providing **limited, whitelisted access** to Home Assistant lights and switches.
+A Model Context Protocol server providing **limited, whitelisted access** to Home Assistant lights and switches.
 
 ## Tools
 
@@ -13,47 +13,49 @@ A [Model Context Protocol](https://modelcontextprotocol.io/) server providing **
 | get_switch | Get a specific switch state |
 | set_switch | Turn a switch on/off |
 
-## Running with Docker Compose
+## Setup
 
-1. Copy and edit config:
+1. Clone the repo:
+   git clone https://github.com/mgossman71/has-mcp
+   cd has-mcp
+
+2. Create your .env file:
+   cp .env.example .env
+   chmod 600 .env
+   # Edit .env with your HA token and host
+
+3. Configure the entity whitelist:
    cp config.example.yaml config.yaml
-2. Set your token:
-   export HA_TOKEN=your-token
-3. Build and start:
+   # Edit config.yaml with your allowed entities
+
+4. Start the server:
    docker compose up -d
 
-The server listens on http://localhost:8765/mcp (streamable HTTP).
+The server will be available at http://localhost:8765/mcp
 
-### Environment variables
+## .env File
+
+Docker Compose reads .env automatically. Required variables:
 
 | Variable | Description |
 |----------|-------------|
-| HA_TOKEN | Home Assistant access token (required) |
-| HA_BASE_URL | HA URL (overrides config.yaml) |
-| HA_ALLOWED_ENTITIES | Comma-separated override |
-
-## Running locally
-
-python3.11 -m venv .venv && source .venv/bin/activate && pip install -e .
-export HA_TOKEN=your-token
-python -m homeassistant_mcp.server --http  # HTTP mode
-python -m homeassistant_mcp.server         # stdio mode
+| HA_TOKEN | Home Assistant long-lived access token (required) |
+| HA_BASE_URL | Home Assistant URL e.g. http://192.168.1.100:8123 (required) |
+| HA_ALLOWED_ENTITIES | Comma-separated override of config.yaml whitelist (optional) |
 
 ## Configuration
 
-Copy config.example.yaml to config.yaml and edit the allowed_entities list.
-Supported domains: light.* and switch.*
-Only whitelisted entities can be accessed. All others are rejected.
+Edit config.yaml to set the entity whitelist. Supported domains: light.* and switch.*
+Only whitelisted entities can be accessed - all others are rejected.
 
 ## MCP Client Registration
 
-HTTP: point your client at http://localhost:8765/mcp
-stdio: use docker run --rm -e HA_TOKEN=... has-mcp
+Point your MCP client at: http://localhost:8765/mcp
 
 ## Security
 
 - Domain locked to light.* and switch.* only
 - Entity whitelist enforced on every tool call
 - No generic service-call tool exposed
-- Token from env var, never in code
-- config.yaml is git-ignored
+- Token stored in .env (gitignored, chmod 600)
+- config.yaml is gitignored
