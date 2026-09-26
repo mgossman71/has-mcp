@@ -50,25 +50,50 @@ Only whitelisted entities can be accessed - all others are rejected.
 
 ## Discovering entities to whitelist
 
-Not sure which entity IDs to add? Run the scanner - it reads `HA_BASE_URL` and
-`HA_TOKEN` from your `.env` (or environment), lists every light/switch your server
-exposes, and marks which are already whitelisted:
+Not sure which entity IDs to add to `allowed_entities`? A scanner is included for
+exactly that.
+
+- **Source code:** `src/homeassistant_mcp/scan.py`
+- **Command:** `homeassistant-mcp-scan` (declared in `pyproject.toml`)
+
+It reads `HA_BASE_URL` and `HA_TOKEN` from your `.env` (or the environment), lists
+every light/switch your server exposes, and marks which are already whitelisted.
+
+### Run it locally (simplest - no Docker)
+
+From the project root (the directory that contains your `.env`):
 
     homeassistant-mcp-scan            # list all light/switch entities
     homeassistant-mcp-scan --new-only # only ones not yet in config.yaml
     homeassistant-mcp-scan --write    # append the new ones to config.yaml
     homeassistant-mcp-scan --all      # include every domain, not just light/switch
 
-Example output:
+Run `pip install -e .` once first so the command is on your PATH (it also installs
+the dependencies). Already have them? Skip the install and run the module directly:
+`python -m homeassistant_mcp.scan --new-only`.
 
-    Current whitelist: 19 entities (from config.yaml)
+### Run it with Docker (no local Python needed)
+
+Rebuild so the image includes the new command, then run it inside the container
+(it uses the same `.env`):
+
+    docker compose build
+    docker compose run --rm homeassistant-mcp homeassistant-mcp-scan --new-only
+
+Note: in Docker, `config.yaml` is baked into the image at build time, so `--write`
+does not persist. For that path, copy the printed YAML into your local `config.yaml`
+and rebuild.
+
+### Example output
 
     Scanned http://10.0.0.25:8123 - 24 light, 6 switch
 
     Lights
-      [ok]  light.garage           Garage
-      [new] light.dining_room      Dining Room
-      ...
+      [ok]  light.garage        Garage
+      [new] light.dining_room   Dining Room
+
+    Switches
+      [new] switch.shelly1pm    Shelly 1 PM
 
     ------------------------------------------------------------
     Paste into config.yaml (allowed_entities):
@@ -80,7 +105,6 @@ Example output:
     Or override via .env (HA_ALLOWED_ENTITIES):
     HA_ALLOWED_ENTITIES=light.dining_room,light.garage,...
 
-## MCP Client Registration
 ## MCP Client Registration
 
 Point your MCP client at: http://localhost:8765/mcp
