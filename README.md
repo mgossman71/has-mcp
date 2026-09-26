@@ -63,14 +63,27 @@ every light/switch your server exposes, and marks which are already whitelisted.
 
 From the project root (the directory that contains your `.env`):
 
-    homeassistant-mcp-scan            # list all light/switch entities
-    homeassistant-mcp-scan --new-only # only ones not yet in config.yaml
-    homeassistant-mcp-scan --write    # append the new ones to config.yaml
-    homeassistant-mcp-scan --all      # include every domain, not just light/switch
+1. Create and activate a virtual environment:
 
-Run `pip install -e .` once first so the command is on your PATH (it also installs
-the dependencies). Already have them? Skip the install and run the module directly:
-`python -m homeassistant_mcp.scan --new-only`.
+       python3 -m venv .venv
+       source .venv/bin/activate          # Windows: .venv\Scripts\activate
+
+2. Install the package - this is what puts `homeassistant-mcp-scan` on your PATH:
+
+       pip install -e .
+
+3. Run it:
+
+       homeassistant-mcp-scan            # list all light/switch entities
+       homeassistant-mcp-scan --new-only # only ones not yet in config.yaml
+       homeassistant-mcp-scan --write    # append the new ones to config.yaml
+       homeassistant-mcp-scan --all      # include every domain, not just light/switch
+
+If `pip install` complains about an "externally-managed-environment", you skipped
+step 1 - activate the venv and retry. If `python3 -m venv` itself fails (missing
+`ensurepip`), install it first: `sudo apt install -y python3-venv` (Debian/Ubuntu),
+then retry. Without a venv you can also run the module directly once the deps are
+installed: `python3 -m homeassistant_mcp.scan --new-only`.
 
 ### Run it with Docker (no local Python needed)
 
