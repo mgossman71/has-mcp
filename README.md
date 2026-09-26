@@ -48,6 +48,39 @@ Docker Compose reads .env automatically. Required variables:
 Edit config.yaml to set the entity whitelist. Supported domains: light.* and switch.*
 Only whitelisted entities can be accessed - all others are rejected.
 
+## Discovering entities to whitelist
+
+Not sure which entity IDs to add? Run the scanner - it reads `HA_BASE_URL` and
+`HA_TOKEN` from your `.env` (or environment), lists every light/switch your server
+exposes, and marks which are already whitelisted:
+
+    homeassistant-mcp-scan            # list all light/switch entities
+    homeassistant-mcp-scan --new-only # only ones not yet in config.yaml
+    homeassistant-mcp-scan --write    # append the new ones to config.yaml
+    homeassistant-mcp-scan --all      # include every domain, not just light/switch
+
+Example output:
+
+    Current whitelist: 19 entities (from config.yaml)
+
+    Scanned http://10.0.0.25:8123 - 24 light, 6 switch
+
+    Lights
+      [ok]  light.garage           Garage
+      [new] light.dining_room      Dining Room
+      ...
+
+    ------------------------------------------------------------
+    Paste into config.yaml (allowed_entities):
+    allowed_entities:
+      - light.dining_room
+      - light.garage
+      ...
+
+    Or override via .env (HA_ALLOWED_ENTITIES):
+    HA_ALLOWED_ENTITIES=light.dining_room,light.garage,...
+
+## MCP Client Registration
 ## MCP Client Registration
 
 Point your MCP client at: http://localhost:8765/mcp

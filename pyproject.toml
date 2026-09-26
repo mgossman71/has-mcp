@@ -15,6 +15,7 @@ build-backend = "hatchling.build"
 
 [project.scripts]
 homeassistant-mcp = "homeassistant_mcp.server:main"
+homeassistant-mcp-scan = "homeassistant_mcp.scan:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/homeassistant_mcp"]
